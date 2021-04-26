@@ -103,5 +103,30 @@ contract CryptoCake is ERC721 {
         slices[_tokenId].eaten = true;
         
     }
+    
+    function slicesOfOwner(address _owner) public view returns(uint256[] memory ownerTokens) {
+        
+        uint256 tokenCount = balanceOf(_owner);
 
+        if (tokenCount == 0) {
+            return new uint256[](0);
+        } else {
+            
+            uint256[] memory result = new uint256[](tokenCount);
+            uint256 totalSlices = slices.length;
+            uint256 resultIndex = 0;
+
+            
+            uint256 slicesId;
+
+            for (slicesId = 0; slicesId <= totalSlices; slicesId++) {
+                if (sliceToOwner[slicesId] == _owner) {
+                    result[resultIndex] = slicesId;
+                    resultIndex++;
+                }
+            }
+
+            return result;
+        }
+    }
 }
