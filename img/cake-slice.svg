@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px"
+	y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
+	<g id="XMLID_7482_">
+		<g id="XMLID_7481_">
+			<rect id="massa" x="65.539" y="196.039" style="fill:#FFDAA7;" width="390.357" height="207.906" />
+			<rect id="recheio-2" x="65.539" y="331.609" style="fill:#B75B16;" width="390.357" height="27.603" />
+			<rect id="recheio-1" x="65.539" y="262.493" style="fill:#FFA6B7;" width="390.357" height="27.603" />
+			<path id="cobertura" style="fill:#B75B16;" d="M475.053,193.947c0,15.367-12.465,27.832-27.833,27.832H99.582
+			c-7.591,0-13.747,6.156-13.747,13.757v168.408H30.192v-188.88c0-18.478,10.165-34.591,25.204-43.036
+			c7.153-4.02,15.4-6.309,24.185-6.298l367.662,0.373c1.753,0,3.472,0.164,5.137,0.482
+			C465.294,169.006,475.053,180.332,475.053,193.947z" />
+		</g>
+		<path id="prato" style="fill:#ADACB2;" d="M462.125,429.226H49.875c-16.164,0-31.535-7.006-42.138-19.207l-5.776-6.646
+		c-4.465-5.137-0.815-13.143,5.991-13.143h496.095c6.806,0,10.455,8.006,5.991,13.143l-5.776,6.646
+		C493.66,422.22,478.289,429.226,462.125,429.226z" />
+	</g>
+</svg>
