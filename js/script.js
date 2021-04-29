@@ -63,15 +63,33 @@ function verFatias(){
 
 
 function inicializaInterface() {
-    //document.getElementById("btnSortear").onclick = sortear;
-    //document.getElementById("btnComprar").onclick = comprarRifa;
-    atualizaInterface();
-    //DApp.contracts.Rifa.getPastEvents("RifaComprada", { fromBlock: 0, toBlock: "latest" }).then((result) => registraEventos(result));  
+    atualizaInterface(); 
+    DApp.contracts.Contrato.methods.slicesOfOwner(DApp.account).call().then(result => listarFatias(result)); 
     //DApp.contracts.Rifa.events.RifaComprada((error, event) => registraEventos([event]));  
 }
 
-function listarFatias() {
-    return DApp.contracts.Contrato.methods.slicesOfOwner(DApp.account).call();
+function listarFatias(ids) {
+    let table = document.getElementById("slices");
+
+    for (let i = 0; i < ids.length; i++){
+        let id = ids[i];
+        var let = DApp.contracts.Contrato.methods.slices(id).call().then(result => {
+            let tr = document.createElement("tr");
+            let td1 = document.createElement("td");
+            td1.innerHTML = "<a>" + "Bolo" + "</a>";
+            let td2 = document.createElement("td");
+            td2.innerHTML = result["message"];
+            let td3 = document.createElement("td");  
+            td3.innerHTML = result["value"];
+            let td4 = document.createElement("td");  
+            td4.innerHTML = "<button class='btn btn-primary'  type='button'><i class='fas fa-cloud'></i></button><button class='btn btn-secondary' type='button'><i class='fas fa-cloud'></i></button>";
+            tr.appendChild(td1);
+            tr.appendChild(td2);
+            tr.appendChild(td3);
+            tr.appendChild(td4);
+            table.appendChild(tr);
+        }); 
+    }
 }
 
 function atualizaInterface() {
@@ -79,8 +97,4 @@ function atualizaInterface() {
         document.getElementById("total-fatias").innerHTML = result;
     });
 
-    listarFatias().then((result) => {
-        document.getElementById("total-fatias").innerHTML = result;
-    });
 }
-
