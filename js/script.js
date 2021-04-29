@@ -61,19 +61,53 @@ function verFatias(){
     return DApp.contracts.Contrato.methods.balanceOf(DApp.account).call({ from: DApp.account });
 }
 
+function comprarBolo() {
+    let valor = document.getElementById("valor").value;
+    let mensagem = document.getElementById("mensagem").value;
+    let valor_wei = 1000000000000000000 * valor;
 
-function inicializaInterface() {
-    atualizaInterface(); 
-    DApp.contracts.Contrato.methods.slicesOfOwner(DApp.account).call().then(result => listarFatias(result)); 
-    //DApp.contracts.Rifa.events.RifaComprada((error, event) => registraEventos([event]));  
+    return DApp.contracts.Contrato.methods.bakeCake(mensagem).send({ from: DApp.account, value: valor_wei }).then(atualizaInterface);
 }
 
-function listarFatias(ids) {
+function comerFatia(e) {
+    let id_fatia = e.target.value;
+
+    document.getElementById(`destino-${id_fatia}`).readOnly = true;
+    document.getElementById(`enviar-${id_fatia}`).disabled = true;
+    e.target.disabled = true;
+    
+    return DApp.contracts.Contrato.methods.eatCake(id_fatia).send({ from: DApp.account }).then(atualizaInterface);
+}
+
+function transferirFatia(e) {
+    let id_fatia = e.target.value;
+    let destino = document.getElementById(`destino-${id_fatia}`).value;
+
+    if (destino) {
+        document.getElementById(`destino-${id_fatia}`).readOnly = true;
+        document.getElementById(`comer-${id_fatia}`).disabled = true;
+        e.target.disabled = true;
+        
+        return DApp.contracts.Contrato.methods.sendCake(destino, id_fatia).send({ from: DApp.account }).then(atualizaInterface);
+    } else {
+        alert('Por favor, insira o endereço do destinatário.');
+    }    
+}
+
+function inicializaInterface() {
+    document.getElementById("btnComprar").onclick = comprarBolo;
+    atualizaInterface();
+}
+
+async function listarFatias(ids) {
     let table = document.getElementById("slices");
+    table.innerText = '';
+    ids = Array.from(ids).sort((a, b) => a - b);
 
     for (let i = 0; i < ids.length; i++){
         let id = ids[i];
-        var let = DApp.contracts.Contrato.methods.slices(id).call().then(result => {
+        
+        var let = await DApp.contracts.Contrato.methods.slices(id).call().then(result => {
             let tr = document.createElement("tr");
             let td1 = document.createElement("td");
             td1.innerHTML = "<a>" + "Bolo" + "</a>";
@@ -81,12 +115,45 @@ function listarFatias(ids) {
             td2.innerHTML = result["message"];
             let td3 = document.createElement("td");  
             td3.innerHTML = result["value"];
-            let td4 = document.createElement("td");  
-            td4.innerHTML = "<button class='btn btn-primary'  type='button'><i class='fas fa-cloud'></i></button><button class='btn btn-secondary' type='button'><i class='fas fa-cloud'></i></button>";
+            let td4 = document.createElement("td");
+
             tr.appendChild(td1);
             tr.appendChild(td2);
             tr.appendChild(td3);
             tr.appendChild(td4);
+
+            if (!result["eaten"]) {
+                let inp = document.createElement("input");
+                inp.id = `destino-${id}`;
+                inp.className = 'form-control';
+                inp.type = 'text';
+
+                let btn1 = document.createElement("button");
+                btn1.className = 'btn btn-primary';
+                btn1.id = `enviar-${id}`;
+                btn1.type = 'button';
+                btn1.value = id;
+                btn1.innerText = "Enviar";
+                btn1.onclick = transferirFatia;
+
+                let btn2 = document.createElement("button");
+                btn2.className = 'btn btn-secondary';
+                btn2.id = `comer-${id}`;
+                btn2.type = 'button';
+                btn2.value = id;
+                btn2.innerText = "Comer";
+                btn2.onclick = comerFatia;
+
+                td4.appendChild(inp);
+                td4.appendChild(btn1);
+                td4.appendChild(btn2);
+            } else {
+                let txt = document.createElement("p");
+                txt.innerText = 'A fatia já foi comida.';
+
+                td4.appendChild(txt);
+            }            
+            
             table.appendChild(tr);
         }); 
     }
@@ -97,4 +164,5 @@ function atualizaInterface() {
         document.getElementById("total-fatias").innerHTML = result;
     });
 
+    DApp.contracts.Contrato.methods.slicesOfOwner(DApp.account).call().then(result => listarFatias(result));
 }
