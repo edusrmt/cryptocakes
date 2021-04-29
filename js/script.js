@@ -196,7 +196,7 @@ function createSliceSVG(container, sliceId, recipe) {
 async function listarFatias(ids) {
     let table = document.getElementById("slices");
     table.innerText = '';
-    ids = Array.from(ids).sort((a, b) => a - b);
+    ids = Array.from(ids).sort((a, b) => b - a);
 
     for (let i = 0; i < ids.length; i++){
         let id = ids[i];
