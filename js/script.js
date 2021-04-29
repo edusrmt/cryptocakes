@@ -99,6 +99,59 @@ function inicializaInterface() {
     atualizaInterface();
 }
 
+function parseRecipe(recipe) {
+    let hex = (recipe >>> 0).toString(16);
+
+    let massa = parseInt(hex[0]);
+    let recheio1 = parseInt(hex[1]);
+    let recheio2 = parseInt(hex[2]);
+    let cobertura = parseInt(hex[3]);
+
+    let receita = '';
+    
+    if (massa == 15) {
+        receita += 'Massa de Red Velvet ';
+    } else if (massa >= 12) {
+        receita += 'Massa de cenoura ';
+    } else if (massa >= 6) {
+        receita += 'Massa de baunilha ';
+    } else {
+        receita += 'Massa de chocolate ';
+    }
+
+    if (recheio1 == 15) {
+        receita += 'recheada com uma camada de morango ';
+    } else if (recheio1 >= 12) {
+        receita += 'recheada com uma camada de doce de leite ';
+    } else if (recheio1 >= 6) {
+        receita += 'recheada com uma camada de leite em pó ';
+    } else {
+        receita += 'recheada com uma camada de brigadeiro ';
+    }
+
+    if (recheio2 == 15) {
+        receita += 'e outra de morango ';
+    } else if (recheio2 >= 12) {
+        receita += 'e outra de doce de leite ';
+    } else if (recheio2 >= 6) {
+        receita += 'e outra de leite em pó ';
+    } else {
+        receita += 'e outra de brigadeiro ';
+    }
+
+    if (recheio2 == 15) {
+        receita += 'e coberto com ganache.';
+    } else if (recheio2 >= 12) {
+        receita += 'e coberto com chantilly.';
+    } else if (recheio2 >= 6) {
+        receita += 'e coberto com creme de confeiteiro.';
+    } else {
+        receita += 'e coberto com merengue.';
+    }
+
+    return receita;
+}
+
 async function listarFatias(ids) {
     let table = document.getElementById("slices");
     table.innerText = '';
@@ -109,24 +162,39 @@ async function listarFatias(ids) {
         
         var let = await DApp.contracts.Contrato.methods.slices(id).call().then(result => {
             let tr = document.createElement("tr");
+            tr.className = 'd-flex';
+
             let td1 = document.createElement("td");
-            td1.innerHTML = "<a>" + "Bolo" + "</a>";
+            td1.innerText = parseRecipe(result['recipe'])
+            td1.className = 'col-3';
+
             let td2 = document.createElement("td");
-            td2.innerHTML = result["message"];
-            let td3 = document.createElement("td");  
-            td3.innerHTML = result["value"];
-            let td4 = document.createElement("td");
+            td2.innerText = result["baker"];
+            td2.className = 'col-3';
+
+            let td3 = document.createElement("td");
+            td3.innerText = result["message"];
+            td3.className = 'col-2';
+
+            let td4 = document.createElement("td");  
+            td4.innerText = result["value"] / 1000000000;
+            td4.className = 'col-1';
+
+            let td5 = document.createElement("td");
+            td5.className = 'col-3';      
 
             tr.appendChild(td1);
             tr.appendChild(td2);
             tr.appendChild(td3);
             tr.appendChild(td4);
+            tr.appendChild(td5);
 
             if (!result["eaten"]) {
                 let inp = document.createElement("input");
                 inp.id = `destino-${id}`;
                 inp.className = 'form-control';
                 inp.type = 'text';
+                inp.placeholder = 'Destinatário'
 
                 let btn1 = document.createElement("button");
                 btn1.className = 'btn btn-primary';
@@ -144,14 +212,11 @@ async function listarFatias(ids) {
                 btn2.innerText = "Comer";
                 btn2.onclick = comerFatia;
 
-                td4.appendChild(inp);
-                td4.appendChild(btn1);
-                td4.appendChild(btn2);
+                td5.appendChild(inp);
+                td5.appendChild(btn1);
+                td5.appendChild(btn2);
             } else {
-                let txt = document.createElement("p");
-                txt.innerText = 'A fatia já foi comida.';
-
-                td4.appendChild(txt);
+                td5.innerText = 'A fatia já foi comida.';
             }            
             
             table.appendChild(tr);
@@ -163,6 +228,8 @@ function atualizaInterface() {
     verFatias().then((result) => {
         document.getElementById("total-fatias").innerHTML = result;
     });
+
+    document.getElementById("endereco").innerHTML = DApp.account;
 
     DApp.contracts.Contrato.methods.slicesOfOwner(DApp.account).call().then(result => listarFatias(result));
 }
